@@ -38,10 +38,17 @@ For large meshes, the command line supports a face-budget downsampling option so
 ```text
 MIMO-FMCW-Radar-Simulator-Multiprocess/
 ├── README.md
+├── README_CN.md
+├── fmcw-2243-cascade.png
 ├── pyproject.toml
 ├── examples/
-│   └── meshes/
-│       └── box.obj
+│   ├── meshes/
+│   │   ├── box.obj
+│   │   └── Thanh.glb
+│   ├── output/
+│   └── plot/
+│       ├── output/
+│       └── plot_thanh_run.py
 └── src/
     └── mimo_fmcw_radar_simulator_multiprocess/
         ├── __init__.py
