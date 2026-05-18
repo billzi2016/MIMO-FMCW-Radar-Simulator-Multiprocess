@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mimo-fmcw-radar-simulator-multiprocess"
+version = "0.1.0"
+description = "Mesh-based MIMO FMCW radar simulator with multiprocess signal synthesis."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26",
+  "trimesh>=4.0"
+]
+
+[project.scripts]
+mimo-fmcw-sim = "mimo_fmcw_radar_simulator_multiprocess.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
