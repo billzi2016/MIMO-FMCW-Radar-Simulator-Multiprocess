@@ -118,6 +118,34 @@ The example human mesh `examples/meshes/Thanh.glb` is a public model file obtain
 - Source repository: `https://github.com/hmthanh/3d-human-model`
 - Direct file URL: `https://raw.githubusercontent.com/hmthanh/3d-human-model/main/Thanh.glb`
 
+## Visualization
+
+The image below shows the real-world target object corresponding to the simulated scene used in this repository.
+
+![Simulated target object](fmcw-2243-cascade.png)
+
+The following PNG results are generated from `examples/output/thanh_run.npz` by the standalone plotting script in `examples/plot/`.
+
+### Summary Heatmaps
+
+![Summary heatmaps](examples/plot/output/summary_heatmaps.png)
+
+### Range-Doppler Heatmap
+
+![Range-Doppler heatmap](examples/plot/output/range_doppler_heatmap.png)
+
+### Range-Angle Heatmap
+
+![Range-Angle heatmap](examples/plot/output/range_angle_heatmap.png)
+
+### Doppler-Angle Heatmap
+
+![Doppler-Angle heatmap](examples/plot/output/doppler_angle_heatmap.png)
+
+### Range-Chirp Heatmap
+
+![Range-Chirp heatmap](examples/plot/output/range_chirp_heatmap.png)
+
 ## License
 
 This repository currently does not include a separate license file.

@@ -136,6 +136,34 @@ PYTHONPATH=src python -m mimo_fmcw_radar_simulator_multiprocess \
 - 仓库地址：`https://github.com/hmthanh/3d-human-model`
 - 文件直链：`https://raw.githubusercontent.com/hmthanh/3d-human-model/main/Thanh.glb`
 
+## 可视化结果
+
+下图展示的是当前仿真场景所对应的真实目标对象实物图。
+
+![被模拟目标对象实物图](fmcw-2243-cascade.png)
+
+下面这些 PNG 结果图由独立绘图脚本 `examples/plot/` 基于 `examples/output/thanh_run.npz` 生成。
+
+### 总览热力图
+
+![总览热力图](examples/plot/output/summary_heatmaps.png)
+
+### 距离-速度热力图
+
+![距离-速度热力图](examples/plot/output/range_doppler_heatmap.png)
+
+### 距离-角度热力图
+
+![距离-角度热力图](examples/plot/output/range_angle_heatmap.png)
+
+### 速度-角度热力图
+
+![速度-角度热力图](examples/plot/output/doppler_angle_heatmap.png)
+
+### 距离-Chirp 热力图
+
+![距离-Chirp 热力图](examples/plot/output/range_chirp_heatmap.png)
+
 ## 默认参数
 
 默认示例参数如下：
