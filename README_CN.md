@@ -2,6 +2,8 @@
 
 `MIMO-FMCW-Radar-Simulator-Multiprocess` 是一个基于三角面片网格的 Python MIMO FMCW 雷达仿真器。系统以 3D mesh 作为目标输入，先提取朝向雷达且未被遮挡的可见面，再基于面片级散射近似生成基带雷达数据，并输出三次 FFT 的结果。
 
+文档站点：https://billzi2016.github.io/MIMO-FMCW-Radar-Simulator-Multiprocess/
+
 ## 项目目标
 
 本项目聚焦一条尽量直接、透明、可解释的仿真链路，核心内容包括：

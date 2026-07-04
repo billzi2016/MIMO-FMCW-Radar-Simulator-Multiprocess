@@ -2,6 +2,8 @@
 
 `MIMO-FMCW-Radar-Simulator-Multiprocess` is a Python simulator for mesh-based MIMO FMCW radar scenes. The input target is a triangle-surface 3D model, and the simulator keeps only radar-facing visible faces before generating baseband radar data and three-stage FFT outputs.
 
+Documentation site: https://billzi2016.github.io/MIMO-FMCW-Radar-Simulator-Multiprocess/
+
 ## Project Goal
 
 This project focuses on a minimal and transparent simulation chain:
