@@ -44,6 +44,23 @@ plugins:
           name: 中文
           build: true
           site_name: MIMO FMCW 雷达仿真器
+          nav_translations:
+            Home: 首页
+            Getting Started: 快速开始
+            Fundamentals: 基础原理
+            What Is Radar: 雷达是什么
+            FMCW Radar: FMCW 雷达
+            Simulator Principle: 模拟器原理
+            User Guide: 用户指南
+            Simulation Workflow: 仿真流程
+            Implementation Details: 实现细节
+            Multiprocessing Acceleration: 多进程加速
+            Core Modules: 核心模块
+            Project: 项目说明
+            Repository Notes: 仓库说明
+            PRD: 需求文档
+            MkDocs Site: MkDocs 站点
+            GitHub Actions: GitHub Actions
 
 # Markdown 扩展用于提升技术文档表达能力：表格、锚点、代码高亮和折叠块。
 markdown_extensions:
