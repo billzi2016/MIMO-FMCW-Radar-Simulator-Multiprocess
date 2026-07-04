@@ -1,16 +1,28 @@
+# 系统与编辑器文件
 .DS_Store
 .idea/
 .vscode/
+
+# Python 缓存与测试缓存
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .pytest_cache/
 .mypy_cache/
+
+# 虚拟环境
 .venv/
 venv/
+
+# 构建产物与包元数据
 build/
 dist/
 *.egg-info/
+
+# 项目运行输出
 examples/output/
 *.npz
+
+# 文档站点构建产物
+docs-site/site/

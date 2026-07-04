@@ -1,0 +1,79 @@
+name: Deploy Docs Site
+
+# 文档站点自动部署工作流。
+# 只关注 docs-site 和 README 相关变更，不把普通代码改动都纳入 Pages 部署。
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # MkDocs 配置、依赖和维护说明。
+      - "docs-site/mkdocs.yml"
+      - "docs-site/requirements.txt"
+      - "docs-site/README.md"
+      # PRD 变更也应触发构建，确保站点需求文档和部署结果同步。
+      - "docs-site/*_prd.md"
+      # 双语内容目录必须同时纳入触发范围。
+      - "docs-site/docs/en/**"
+      - "docs-site/docs/zh/**"
+      - "docs-site/docs/assets/**"
+      # workflow 自身变化需要触发一次验证。
+      - ".github/workflows/docs-site.yml"
+      # README 是站点内容的重要来源和入口说明，也纳入触发范围。
+      - "README.md"
+      - "README_CN.md"
+  workflow_dispatch:
+
+# GitHub Pages 部署所需的最小权限。
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 避免同一分支连续 push 时多个 Pages 部署互相覆盖。
+concurrency:
+  group: docs-site-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取仓库源码，包含 docs-site、README 和静态资源。
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 使用稳定 Python 版本构建 MkDocs 站点，并缓存 pip 依赖。
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: docs-site/requirements.txt
+
+      # 依赖统一从 docs-site/requirements.txt 安装，避免依赖隐式 runner 环境。
+      - name: Install docs dependencies
+        run: pip install -r docs-site/requirements.txt
+
+      # strict 模式会把缺失页面、坏链接等问题尽早暴露出来。
+      - name: Build MkDocs site
+        working-directory: docs-site
+        run: mkdocs build --strict
+
+      # GitHub Pages 官方部署链路要求先上传静态站点产物。
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # 将 build job 上传的 docs-site/site 发布到 GitHub Pages。
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,79 @@
+# MkDocs 站点主配置。
+# 目标：从第一版开始就把英文 `docs/en` 和中文 `docs/zh` 分成两套目录，
+# 并通过 mkdocs-static-i18n 生成可切换语言的静态文档站点。
+site_name: MIMO FMCW Radar Simulator
+site_description: Bilingual documentation for the mesh-based MIMO FMCW radar simulator.
+site_url: https://billzi2016.github.io/MIMO-FMCW-Radar-Simulator-Multiprocess/
+repo_url: https://github.com/billzi2016/MIMO-FMCW-Radar-Simulator-Multiprocess
+repo_name: billzi2016/MIMO-FMCW-Radar-Simulator-Multiprocess
+
+# `docs_dir` 是文档源码目录，内部再拆 `en/` 和 `zh/`。
+# `site_dir` 是本地构建产物目录，已在 .gitignore 中忽略。
+docs_dir: docs
+site_dir: site
+
+# 使用 Material 主题，保持文档站点导航、搜索和代码块交互完整。
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+
+# 插件说明：
+# - search 提供站内搜索。
+# - i18n 按 folder 模式读取 `docs/en` 和 `docs/zh`。
+plugins:
+  - search
+  - i18n:
+      # folder 模式要求不同语言各自独立目录，符合本项目“一开始就两半”的要求。
+      docs_structure: folder
+      fallback_to_default: true
+      reconfigure_material: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+          site_name: MIMO FMCW Radar Simulator
+        - locale: zh
+          name: 中文
+          build: true
+          site_name: MIMO FMCW 雷达仿真器
+
+# Markdown 扩展用于提升技术文档表达能力：表格、锚点、代码高亮和折叠块。
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+
+# 导航使用语言无关路径。i18n 插件会分别到 docs/en 与 docs/zh 下寻找同名页面。
+# 因此新增页面时必须在两个语言目录同时创建对应文件。
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Fundamentals:
+      - What Is Radar: fundamentals/what-is-radar.md
+      - FMCW Radar: fundamentals/fmcw-radar.md
+      - Simulator Principle: fundamentals/simulator-principle.md
+  - User Guide:
+      - Simulation Workflow: user-guide/simulation-workflow.md
+      - Implementation Details: user-guide/implementation-details.md
+      - Multiprocessing Acceleration: user-guide/multiprocessing.md
+      - Core Modules: user-guide/core-modules.md
+  - Project:
+      - Repository Notes: project/repository-notes.md
+  - PRD:
+      - MkDocs Site: prd/mkdocs-site.md
+      - GitHub Actions: prd/github-actions.md

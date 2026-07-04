@@ -1,7 +1,10 @@
+# Python 打包配置。
+# 这个项目使用 src-layout：源码放在 `src/` 下，避免开发目录和安装后包路径混淆。
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
+# 项目元数据。这里的信息会被 `pip install -e .` 和打包工具读取。
 [project]
 name = "mimo-fmcw-radar-simulator-multiprocess"
 version = "0.1.0"
@@ -9,16 +12,22 @@ description = "Mesh-based MIMO FMCW radar simulator with multiprocess signal syn
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+  # 数值计算主依赖：复数信号、FFT、几何向量运算都依赖 numpy。
   "numpy>=1.26",
+  # GLB 等复杂 mesh 格式交给 trimesh 解析，避免手写二进制资产解析器。
   "trimesh>=4.0",
+  # 示例绘图脚本使用 matplotlib 输出雷达热力图。
   "matplotlib>=3.8"
 ]
 
+# 安装后提供一个短命令入口，等价于 `python -m mimo_fmcw_radar_simulator_multiprocess`。
 [project.scripts]
 mimo-fmcw-sim = "mimo_fmcw_radar_simulator_multiprocess.main:main"
 
+# 告诉 setuptools 包源码不在仓库根目录，而是在 `src/`。
 [tool.setuptools]
 package-dir = {"" = "src"}
 
+# 自动发现 `src/` 下的 Python 包。
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,0 +1,8 @@
+# MkDocs 主程序，负责把 Markdown 文档构建成静态站点。
+mkdocs>=1.5
+
+# Material 主题，提供导航、搜索、代码复制等文档站点常用交互。
+mkdocs-material>=9.5
+
+# 静态 i18n 插件，用 `docs/en` 和 `docs/zh` 两套目录生成双语站点。
+mkdocs-static-i18n>=1.2

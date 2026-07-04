@@ -1,3 +1,13 @@
+"""把仿真输出的 NPZ 文件画成雷达热力图。
+
+主仿真程序输出的是多维复数数组，不适合直接人工观察。这个脚本负责把
+Range-Doppler、Range-Angle、Doppler-Angle 和 Range-Chirp 四种投影保存成
+PNG，方便检查仿真结果是否有合理的距离、速度和角度结构。
+
+这个脚本不参与仿真本身，只负责“结果解释”。它默认读取 `thanh_run.npz`，
+也可以通过命令行参数指向其他仿真输出。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -8,6 +18,8 @@ import numpy as np
 
 
 def main() -> None:
+    """读取 NPZ，生成单图和 2x2 汇总图。"""
+
     arguments = build_parser().parse_args()
     data = np.load(arguments.input, allow_pickle=True)
 
@@ -23,6 +35,7 @@ def main() -> None:
     range_doppler_angle_cube = data["range_doppler_angle_cube"]
     range_fft = data["range_fft"]
 
+    # 三维 cube 按某一维求幅值和，得到二维热力图投影。
     doppler_angle_map = np.sum(np.abs(range_doppler_angle_cube), axis=0)
     range_chirp_map = np.sum(np.abs(range_fft), axis=2)
     chirp_axis = np.arange(range_fft.shape[1], dtype=np.int64)
@@ -79,6 +92,12 @@ def main() -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """构造绘图脚本参数。
+
+    默认读取示例输出 `examples/output/thanh_run.npz`，并把图片写到
+    `examples/plot/output/`。
+    """
+
     script_dir = Path(__file__).resolve().parent
     default_input = script_dir.parent / "output" / "thanh_run.npz"
     default_output_dir = script_dir / "output"
@@ -98,6 +117,11 @@ def save_heatmap(
     y_label: str,
     output_path: Path,
 ) -> None:
+    """保存单张热力图。
+
+    matrix 会先转为 dB 幅值，再用 `imshow` 按坐标轴范围渲染。
+    """
+
     figure, axis = plt.subplots(figsize=(8, 6))
     image = axis.imshow(
         to_db(matrix),
@@ -127,6 +151,8 @@ def save_summary(
     chirp_axis: np.ndarray,
     output_path: Path,
 ) -> None:
+    """把四类常用雷达投影合成一张 2x2 总览图。"""
+
     figure, axes = plt.subplots(2, 2, figsize=(14, 10))
 
     plot_on_axis(
@@ -180,6 +206,8 @@ def plot_on_axis(
     x_label: str,
     y_label: str,
 ) -> None:
+    """在已有 matplotlib axis 上绘制一张 dB 热力图。"""
+
     image = axis.imshow(
         to_db(matrix),
         origin="lower",
@@ -195,17 +223,30 @@ def plot_on_axis(
 
 
 def to_db(matrix: np.ndarray) -> np.ndarray:
+    """把线性幅值转为 dB。
+
+    下限 `1e-12` 用于避免 log10(0) 产生 `-inf`，使图像色条更稳定。
+    """
+
     magnitude = np.abs(matrix)
     return 20.0 * np.log10(np.maximum(magnitude, 1e-12))
 
 
 def build_extent(x_axis: np.ndarray, y_axis: np.ndarray) -> list[float]:
+    """根据 x/y 坐标轴生成 imshow 需要的 `[xmin, xmax, ymin, ymax]`。"""
+
     x_min, x_max = axis_edges(x_axis)
     y_min, y_max = axis_edges(y_axis)
     return [x_min, x_max, y_min, y_max]
 
 
 def axis_edges(axis_values: np.ndarray) -> tuple[float, float]:
+    """把 bin 中心坐标转换为图像边界坐标。
+
+    `imshow` 的 extent 表示像素边界，而雷达坐标轴数组通常表示 bin 中心。
+    因此需要向两端各扩半个 step。
+    """
+
     values = np.asarray(axis_values, dtype=np.float64)
     if values.size == 1:
         delta = 0.5
