@@ -50,9 +50,11 @@ plugins:
             Fundamentals: 基础原理
             What Is Radar: 雷达是什么
             FMCW Radar: FMCW 雷达
+            FMCW vs Pulse Radar: FMCW 与脉冲雷达区别
             Simulator Principle: 模拟器原理
             User Guide: 用户指南
             Simulation Workflow: 仿真流程
+            Mesh Preparation: Mesh 获取与准备
             Implementation Details: 实现细节
             Multiprocessing Acceleration: 多进程加速
             Core Modules: 核心模块
@@ -83,9 +85,11 @@ nav:
   - Fundamentals:
       - What Is Radar: fundamentals/what-is-radar.md
       - FMCW Radar: fundamentals/fmcw-radar.md
+      - FMCW vs Pulse Radar: fundamentals/fmcw-vs-pulse-radar.md
       - Simulator Principle: fundamentals/simulator-principle.md
   - User Guide:
       - Simulation Workflow: user-guide/simulation-workflow.md
+      - Mesh Preparation: user-guide/mesh-preparation.md
       - Implementation Details: user-guide/implementation-details.md
       - Multiprocessing Acceleration: user-guide/multiprocessing.md
       - Core Modules: user-guide/core-modules.md
