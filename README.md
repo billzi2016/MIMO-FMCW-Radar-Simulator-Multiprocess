@@ -43,6 +43,11 @@ MIMO-FMCW-Radar-Simulator-Multiprocess/
 ├── README_CN.md
 ├── fmcw-2243-cascade.png
 ├── pyproject.toml
+├── profiles/
+│   ├── awr1642.toml
+│   ├── awr2243.toml
+│   ├── awr2243_cascade.toml
+│   └── iwr6843.toml
 ├── examples/
 │   ├── meshes/
 │   │   ├── box.obj
@@ -60,6 +65,7 @@ MIMO-FMCW-Radar-Simulator-Multiprocess/
         ├── main.py
         ├── mesh_loader.py
         ├── multiprocess_engine.py
+        ├── profile_loader.py
         ├── radar_model.py
         ├── scatter_model.py
         ├── signal_synth.py
@@ -91,6 +97,35 @@ python -m mimo_fmcw_radar_simulator_multiprocess \
   --num-chirps 16 \
   --output examples/output/thanh_run.npz
 ```
+
+Load a radar profile by name:
+
+```bash
+python -m mimo_fmcw_radar_simulator_multiprocess \
+  --profile awr2243 \
+  --mesh examples/meshes/box.obj \
+  --output examples/output/awr2243_run.npz
+```
+
+Use the four-chip AWR2243 Cascade profile with 86 effective azimuth virtual channels:
+
+```bash
+python -m mimo_fmcw_radar_simulator_multiprocess \
+  --profile awr2243_cascade \
+  --mesh examples/meshes/box.obj \
+  --output examples/output/awr2243_cascade_run.npz
+```
+
+Available profiles:
+
+| Profile | Frequency range | Physical array | Effective azimuth channels |
+| --- | --- | --- | ---: |
+| `awr1642` | 76-81 GHz | 2 TX x 4 RX | 8 |
+| `awr2243` | 76-81 GHz | 3 TX x 4 RX | 12 |
+| `iwr6843` | 60-64 GHz | 3 TX x 4 RX | 12 |
+| `awr2243_cascade` | 76-81 GHz | 12 TX x 16 RX | 86 |
+
+Explicit radar CLI options override values loaded from a profile.
 
 The output file stores:
 
@@ -154,6 +189,12 @@ The following PNG results are generated from `examples/output/thanh_run.npz` by 
 ### Range-Chirp Heatmap
 
 ![Range-Chirp heatmap](examples/plot/output/range_chirp_heatmap.png)
+
+## Disclaimer
+
+Texas Instruments, TI, AWR1642, AWR2243, and IWR6843 are trademarks or product names of Texas Instruments Incorporated. This project is an independent, unofficial simulation tool intended solely for educational and research purposes. It is not affiliated with, endorsed by, sponsored by, or otherwise associated with Texas Instruments Incorporated.
+
+The simulator is independently implemented using general FMCW and MIMO radar principles. It does not incorporate TI source code, firmware, SDK components, proprietary algorithms, confidential information, or copied technical documentation. References to TI device names and publicly available specifications are used solely to identify example hardware profiles and factual operating parameters. The simulation models, profile format, and software implementation in this repository were developed independently.
 
 ## License
 

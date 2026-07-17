@@ -18,6 +18,7 @@ import numpy as np
 from .fft_pipeline import run_fft_pipeline
 from .mesh_loader import load_mesh
 from .multiprocess_engine import default_worker_count
+from .profile_loader import load_radar_profile
 from .radar_model import RadarConfig, TargetMotion
 from .signal_synth import simulate_rdc
 
@@ -27,16 +28,7 @@ def main() -> None:
 
     arguments = _build_parser().parse_args()
 
-    # 雷达配置来自命令行参数；默认值对应一个小规模可快速运行的演示设置。
-    radar = RadarConfig(
-        carrier_hz=arguments.carrier_hz,
-        bandwidth_hz=arguments.bandwidth_hz,
-        chirp_duration_s=arguments.chirp_duration_s,
-        num_adc_samples=arguments.num_adc_samples,
-        num_chirps=arguments.num_chirps,
-        num_tx=arguments.num_tx,
-        num_rx=arguments.num_rx,
-    )
+    radar, profile_name = _build_radar_config(arguments)
     # 目标模型是刚体运动：初始位置、速度、姿态角和整体反射率。
     target = TargetMotion(
         initial_position_m=(arguments.x0_m, arguments.y0_m, arguments.z0_m),
@@ -61,6 +53,34 @@ def main() -> None:
     print(f"Range-Doppler-Angle cube shape: {outputs['range_doppler_angle_cube'].shape}")
     print(f"Faces used: {mesh.faces.shape[0]}")
     print(f"Workers used: {workers}")
+    if profile_name is not None:
+        print(f"Radar profile: {profile_name}")
+
+
+def _build_radar_config(arguments: argparse.Namespace) -> tuple[RadarConfig, str | None]:
+    """合并内置默认值、TOML profile 和显式命令行覆盖参数。"""
+
+    overrides = {
+        "carrier_hz": arguments.carrier_hz,
+        "bandwidth_hz": arguments.bandwidth_hz,
+        "chirp_duration_s": arguments.chirp_duration_s,
+        "num_adc_samples": arguments.num_adc_samples,
+        "num_chirps": arguments.num_chirps,
+        "num_tx": arguments.num_tx,
+        "num_rx": arguments.num_rx,
+        "azimuth_virtual_channels": arguments.azimuth_virtual_channels,
+    }
+    if arguments.profile is None:
+        defaults = RadarConfig()
+        values = {
+            key: value if value is not None else getattr(defaults, key)
+            for key, value in overrides.items()
+        }
+        return RadarConfig(**values), None
+
+    project_root = Path(__file__).resolve().parents[2]
+    profile = load_radar_profile(arguments.profile, project_root / "profiles")
+    return profile.to_radar_config(**overrides), profile.name
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -81,13 +101,15 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-faces", type=int, default=None, help="Optional face-budget downsampling before simulation.")
 
     # 雷达波形和阵列规模参数。
-    parser.add_argument("--carrier-hz", type=float, default=77e9)
-    parser.add_argument("--bandwidth-hz", type=float, default=150e6)
-    parser.add_argument("--chirp-duration-s", type=float, default=40e-6)
-    parser.add_argument("--num-adc-samples", type=int, default=256)
-    parser.add_argument("--num-chirps", type=int, default=64)
-    parser.add_argument("--num-tx", type=int, default=2)
-    parser.add_argument("--num-rx", type=int, default=4)
+    parser.add_argument("--profile", type=str, default=None, help="Radar profile name or TOML path.")
+    parser.add_argument("--carrier-hz", type=float, default=None)
+    parser.add_argument("--bandwidth-hz", type=float, default=None)
+    parser.add_argument("--chirp-duration-s", type=float, default=None)
+    parser.add_argument("--num-adc-samples", type=int, default=None)
+    parser.add_argument("--num-chirps", type=int, default=None)
+    parser.add_argument("--num-tx", type=int, default=None)
+    parser.add_argument("--num-rx", type=int, default=None)
+    parser.add_argument("--azimuth-virtual-channels", type=int, default=None)
 
     # 目标初始位置、速度、姿态和反射率参数。
     parser.add_argument("--x0-m", type=float, default=0.0)

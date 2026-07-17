@@ -24,7 +24,8 @@ class RadarConfig:
     这里的默认值对应一个简化的 77GHz 毫米波雷达设置：
     - fast-time 维度由 `num_adc_samples` 和 chirp 时长决定，用于距离 FFT。
     - slow-time 维度由 `num_chirps` 决定，用于多普勒 FFT。
-    - `num_tx * num_rx` 形成虚拟阵列通道，用于角度 FFT。
+    - `num_tx * num_rx` 形成原始虚拟阵列通道，用于角度 FFT。
+    - `azimuth_virtual_channels` 可选取水平方位向的有效虚拟阵元数。
     """
 
     carrier_hz: float = 77e9
@@ -34,6 +35,20 @@ class RadarConfig:
     num_chirps: int = 64
     num_tx: int = 2
     num_rx: int = 4
+    azimuth_virtual_channels: int | None = None
+
+    def __post_init__(self) -> None:
+        if self.num_tx <= 0 or self.num_rx <= 0:
+            raise ValueError("num_tx and num_rx must be positive")
+        if self.azimuth_virtual_channels is not None:
+            if not 1 <= self.azimuth_virtual_channels <= self.num_tx * self.num_rx:
+                raise ValueError("azimuth_virtual_channels must be within the raw virtual channel count")
+
+    @property
+    def num_channels(self) -> int:
+        """用于当前水平角度处理的有效虚拟通道数。"""
+
+        return self.azimuth_virtual_channels or self.num_tx * self.num_rx
 
     @property
     def light_speed(self) -> float:
@@ -106,11 +121,26 @@ class RadarConfig:
         近似表示。后续角度 FFT 实际处理的是这些虚拟通道上的相位差。
         """
 
-        channels = []
-        for tx in self.tx_positions_m:
-            for rx in self.rx_positions_m:
-                channels.append(tx + rx)
-        return np.asarray(channels, dtype=np.float64)
+        tx_positions, rx_positions = self.channel_pair_positions_m
+        return tx_positions + rx_positions
+
+    @property
+    def channel_pair_positions_m(self) -> tuple[np.ndarray, np.ndarray]:
+        """返回当前有效虚拟通道对应的 Tx/Rx 位置。
+
+        普通单芯片配置保留实际的 Tx/Rx 笛卡尔积。Cascade profile 从 192 个
+        原始组合中抽象出 86 个水平有效阵元，并用等间距等效相位中心建模。
+        """
+
+        raw_count = self.num_tx * self.num_rx
+        if self.num_channels == raw_count:
+            tx_positions = np.repeat(self.tx_positions_m, self.num_rx, axis=0)
+            rx_positions = np.tile(self.rx_positions_m, (self.num_tx, 1))
+            return tx_positions, rx_positions
+
+        virtual_positions = np.zeros((self.num_channels, 3), dtype=np.float64)
+        virtual_positions[:, 0] = np.arange(self.num_channels, dtype=np.float64) * self.element_spacing_m
+        return virtual_positions / 2.0, virtual_positions / 2.0
 
     @property
     def radar_phase_center_m(self) -> np.ndarray:
@@ -120,7 +150,8 @@ class RadarConfig:
         这里用所有 Tx/Rx 阵元位置的平均值作为近似相位中心。
         """
 
-        all_positions = np.vstack([self.tx_positions_m, self.rx_positions_m])
+        tx_positions, rx_positions = self.channel_pair_positions_m
+        all_positions = np.vstack([tx_positions, rx_positions])
         return np.mean(all_positions, axis=0)
 
 

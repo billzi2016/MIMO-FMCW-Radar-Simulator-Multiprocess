@@ -41,6 +41,11 @@ MIMO-FMCW-Radar-Simulator-Multiprocess/
 ├── README_CN.md
 ├── fmcw-2243-cascade.png
 ├── pyproject.toml
+├── profiles/
+│   ├── awr1642.toml
+│   ├── awr2243.toml
+│   ├── awr2243_cascade.toml
+│   └── iwr6843.toml
 ├── examples/
 │   ├── meshes/
 │   │   ├── box.obj
@@ -58,6 +63,7 @@ MIMO-FMCW-Radar-Simulator-Multiprocess/
         ├── main.py
         ├── mesh_loader.py
         ├── multiprocess_engine.py
+        ├── profile_loader.py
         ├── radar_model.py
         ├── scatter_model.py
         ├── signal_synth.py
@@ -99,6 +105,35 @@ PYTHONPATH=src python -m mimo_fmcw_radar_simulator_multiprocess \
   --num-chirps 16 \
   --output examples/output/thanh_run.npz
 ```
+
+按名称直接加载雷达 profile：
+
+```bash
+python -m mimo_fmcw_radar_simulator_multiprocess \
+  --profile awr2243 \
+  --mesh examples/meshes/box.obj \
+  --output examples/output/awr2243_run.npz
+```
+
+使用具有 86 个水平有效虚拟阵元的四芯片 AWR2243 Cascade profile：
+
+```bash
+python -m mimo_fmcw_radar_simulator_multiprocess \
+  --profile awr2243_cascade \
+  --mesh examples/meshes/box.obj \
+  --output examples/output/awr2243_cascade_run.npz
+```
+
+内置 profile：
+
+| Profile | 频率范围 | 物理阵列 | 水平有效虚拟通道 |
+| --- | --- | --- | ---: |
+| `awr1642` | 76-81 GHz | 2 TX x 4 RX | 8 |
+| `awr2243` | 76-81 GHz | 3 TX x 4 RX | 12 |
+| `iwr6843` | 60-64 GHz | 3 TX x 4 RX | 12 |
+| `awr2243_cascade` | 76-81 GHz | 12 TX x 16 RX | 86 |
+
+显式传入的雷达命令行参数会覆盖 profile 中的对应值。
 
 ## 输入与输出
 
@@ -184,3 +219,9 @@ PYTHONPATH=src python -m mimo_fmcw_radar_simulator_multiprocess \
 ## 当前边界
 
 当前版本侧重最小可运行链路，重点在于 mesh 可见面筛选、基础散射建模、RDC 合成和三次 FFT。若继续扩展，可进一步引入更高效的遮挡加速结构、更细化的散射模型、结果可视化以及更复杂的目标运动建模。
+
+## 免责声明
+
+Texas Instruments、TI、AWR1642、AWR2243 和 IWR6843 是 Texas Instruments Incorporated 的商标或产品名称。本项目是独立、非官方的仿真工具，仅用于教育和研究目的。本项目与 Texas Instruments Incorporated 不存在任何隶属、认可、赞助或其他关联关系。
+
+本仿真器基于通用的 FMCW 和 MIMO 雷达原理独立实现，未使用 TI 的源代码、固件、SDK 组件、专有算法、保密信息或复制的技术文档。项目对 TI 产品名称及公开规格参数的引用，仅用于标识示例硬件 profile 和描述事实性工作参数。本仓库中的仿真模型、profile 格式和软件实现均为独立开发。

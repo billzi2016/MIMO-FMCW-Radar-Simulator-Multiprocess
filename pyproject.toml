@@ -10,7 +10,7 @@ name = "mimo-fmcw-radar-simulator-multiprocess"
 version = "0.1.0"
 description = "Mesh-based MIMO FMCW radar simulator with multiprocess signal synthesis."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
   # 数值计算主依赖：复数信号、FFT、几何向量运算都依赖 numpy。
   "numpy>=1.26",

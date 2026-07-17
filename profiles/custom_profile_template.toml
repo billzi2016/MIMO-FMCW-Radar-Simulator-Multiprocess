@@ -1,0 +1,24 @@
+# Technical parameters are based on publicly available TI documentation.
+# Copy this file to a new TOML file and replace every explanatory string with a real value.
+# Hardware limits come from the TI product page, device datasheet, or cascade reference-design guide.
+# Simulation values describe the waveform you want to simulate and must remain within those hardware limits.
+
+[device]
+name = "Enter the exact TI device or board name shown on its product page, for example AWR2243 or AWR2243 Cascade."
+frequency_min_hz = "Find 'Frequency range' or 'Frequency coverage' on the TI product page or in the device datasheet; enter the minimum supported RF frequency in Hz, for example 76e9 for 76 GHz."
+frequency_max_hz = "Find 'Frequency range' or 'Frequency coverage' on the TI product page or in the device datasheet; enter the maximum supported RF frequency in Hz, for example 81e9 for 81 GHz."
+max_bandwidth_hz = "Find 'available bandwidth' or 'continuous bandwidth' in the TI device datasheet; enter the maximum supported sweep bandwidth in Hz, for example 5e9 for 5 GHz."
+max_adc_sample_rate_hz = "Find 'ADC sampling rate' in the TI product specifications or the RF Specifications table in the datasheet; enter the applicable maximum rate in samples per second, for example 45e6 for 45 Msps."
+num_chips = "Enter the number of synchronized radar devices in the hardware configuration; use 1 for a single device or the chip count stated in the TI cascade reference design."
+num_tx = "Find 'Number of transmitters', 'Transmit channels', or 'TX antennas' in the TI product page, datasheet, EVM guide, or cascade design guide; enter the total physical TX count as an integer."
+num_rx = "Find 'Number of receivers', 'Receive channels', or 'RX antennas' in the TI product page, datasheet, EVM guide, or cascade design guide; enter the total physical RX count as an integer."
+raw_virtual_channels = "Enter num_tx multiplied by num_rx; this is the number of raw MIMO TX/RX combinations before removing duplicate positions or selecting an azimuth subarray."
+azimuth_virtual_channels = "Find the azimuth virtual-array element count in the TI EVM user guide, antenna-layout figure, or reference-design guide; enter the number of effective horizontal channels used for angle processing, not automatically the raw TX times RX count."
+documentation_url = "Enter the direct URL of the TI product page, device datasheet, EVM user guide, or reference-design guide used for the hardware values above."
+
+[simulation]
+carrier_hz = "Choose an RF carrier or start frequency inside frequency_min_hz and frequency_max_hz; enter it in Hz. In TI chirp configuration documentation, compare this with the start-frequency field such as startFreqConst."
+bandwidth_hz = "Choose the FMCW sweep bandwidth in Hz and keep it less than or equal to max_bandwidth_hz. In TI chirp configuration documentation, derive it from frequency slope multiplied by the active ramp duration when bandwidth is not listed directly."
+chirp_duration_s = "Enter the simulated active chirp or ramp duration in seconds, for example 40e-6 for 40 microseconds. Look for ramp timing fields such as rampEndTime in TI profile or chirp configuration documentation."
+num_adc_samples = "Enter the number of ADC samples captured during one chirp as an integer. Look for numAdcSamples in TI mmWave profile configuration documentation and ensure num_adc_samples divided by chirp_duration_s does not exceed max_adc_sample_rate_hz."
+num_chirps = "Enter the number of chirps to simulate in one frame as an integer. This is an experiment or frame-configuration choice rather than a fixed device specification; compare it with the chirp range and loop count in TI frame configuration documentation."

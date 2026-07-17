@@ -81,7 +81,7 @@ def angle_axis_deg(radar: RadarConfig) -> np.ndarray:
     频率映射到 `[-1, 1]` 后用 arcsin 得到角度刻度。
     """
 
-    num_channels = radar.num_tx * radar.num_rx
+    num_channels = radar.num_channels
     normalized = 2.0 * np.fft.fftshift(np.fft.fftfreq(num_channels, d=1.0))
     clipped = np.clip(normalized, -1.0, 1.0)
     return np.rad2deg(np.arcsin(clipped))

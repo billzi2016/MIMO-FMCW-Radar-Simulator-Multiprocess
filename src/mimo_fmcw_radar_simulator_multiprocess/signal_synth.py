@@ -1,7 +1,7 @@
 """RDC 原始雷达数据合成。
 
 RDC 指 range-Doppler cube 前的原始复数采样数据，形状为：
-`num_adc_samples x num_chirps x (num_tx * num_rx)`。
+`num_adc_samples x num_chirps x num_channels`。
 
 整体流程：
 1. 按 chirp 把目标网格移动到当前时刻位置。
@@ -48,7 +48,7 @@ def simulate_rdc(
     """生成 MIMO FMCW 雷达原始复数采样数据。
 
     返回数组维度为：
-    `(num_adc_samples, num_chirps, num_tx * num_rx)`。
+    `(num_adc_samples, num_chirps, num_channels)`。
     第 0 维是 fast-time，第 1 维是 slow-time，第 2 维是虚拟阵列通道。
     """
 
@@ -59,7 +59,7 @@ def simulate_rdc(
     ]
     blocks = parallel_map(_simulate_block, tasks, worker_count)
 
-    channel_count = radar.num_tx * radar.num_rx
+    channel_count = radar.num_channels
     rdc = np.zeros((radar.num_adc_samples, radar.num_chirps, channel_count), dtype=np.complex128)
     for start, stop, block in blocks:
         # 每个 worker 返回一个连续 chirp 片段，直接写回 slow-time 维度。
@@ -80,12 +80,14 @@ def _simulate_block(task: _BlockTask) -> tuple[int, int, np.ndarray]:
 
     rotation = euler_rotation_matrix(*target.euler_deg)
     base_vertices = mesh.vertices
-    # 每个 Tx/Rx 组合形成一个虚拟通道；通道间相位差用于后续角度 FFT。
-    channel_pairs = [(tx, rx) for tx in radar.tx_positions_m for rx in radar.rx_positions_m]
+    # 每个有效 Tx/Rx 位置对形成一个虚拟通道；通道间相位差用于后续角度 FFT。
+    channel_tx_positions, channel_rx_positions = radar.channel_pair_positions_m
+    channel_pairs = zip(channel_tx_positions, channel_rx_positions)
+    channel_pairs = tuple(channel_pairs)
     fast_time = radar.fast_time_s
 
     block = np.zeros(
-        (radar.num_adc_samples, task.stop - task.start, radar.num_tx * radar.num_rx),
+        (radar.num_adc_samples, task.stop - task.start, radar.num_channels),
         dtype=np.complex128,
     )
 

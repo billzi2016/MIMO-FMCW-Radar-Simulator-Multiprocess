@@ -1,0 +1,20 @@
+# Technical parameters are based on publicly available TI documentation.
+[device]
+name = "AWR2243"
+frequency_min_hz = 76e9
+frequency_max_hz = 81e9
+max_bandwidth_hz = 5e9
+max_adc_sample_rate_hz = 45e6
+num_chips = 1
+num_tx = 3
+num_rx = 4
+raw_virtual_channels = 12
+azimuth_virtual_channels = 12
+documentation_url = "https://www.ti.com/product/AWR2243"
+
+[simulation]
+carrier_hz = 77e9
+bandwidth_hz = 150e6
+chirp_duration_s = 40e-6
+num_adc_samples = 256
+num_chirps = 64
