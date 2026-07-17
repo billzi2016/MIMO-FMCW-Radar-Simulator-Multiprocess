@@ -196,6 +196,8 @@ Texas Instruments, TI, AWR1642, AWR2243, and IWR6843 are trademarks or product n
 
 The simulator is independently implemented using general FMCW and MIMO radar principles. It does not incorporate TI source code, firmware, SDK components, proprietary algorithms, confidential information, or copied technical documentation. References to TI device names and publicly available specifications are used solely to identify example hardware profiles and factual operating parameters. The simulation models, profile format, and software implementation in this repository were developed independently.
 
+This project uses publicly available files and parameters to support academic reproducibility consistent with practices commonly encouraged in ACM and IEEE publications, including reproduction of documented data-processing workflows and experimental results.
+
 ## License
 
 This repository currently does not include a separate license file.

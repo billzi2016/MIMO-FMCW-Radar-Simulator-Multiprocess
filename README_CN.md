@@ -225,3 +225,5 @@ python -m mimo_fmcw_radar_simulator_multiprocess \
 Texas Instruments、TI、AWR1642、AWR2243 和 IWR6843 是 Texas Instruments Incorporated 的商标或产品名称。本项目是独立、非官方的仿真工具，仅用于教育和研究目的。本项目与 Texas Instruments Incorporated 不存在任何隶属、认可、赞助或其他关联关系。
 
 本仿真器基于通用的 FMCW 和 MIMO 雷达原理独立实现，未使用 TI 的源代码、固件、SDK 组件、专有算法、保密信息或复制的技术文档。项目对 TI 产品名称及公开规格参数的引用，仅用于标识示例硬件 profile 和描述事实性工作参数。本仓库中的仿真模型、profile 格式和软件实现均为独立开发。
+
+本项目使用公开文件和参数，以支持符合 ACM 和 IEEE 出版物通常倡导的学术复现实践，包括复现论文中记录的数据处理流程与实验结果。
